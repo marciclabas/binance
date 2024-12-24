@@ -9,7 +9,6 @@ help:
 build:
   cd {{PKG}} && \
   rm -drf dist && \
-  pyright . && \
   {{PYTHON}} -m build && \
   rm -drf build
 
