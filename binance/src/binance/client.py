@@ -1,4 +1,4 @@
-from typing_extensions import TypeVar, ParamSpec, Protocol, Coroutine, Generic
+from typing_extensions import TypeVar, ParamSpec
 from functools import wraps
 import httpx
 

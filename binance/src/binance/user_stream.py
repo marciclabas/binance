@@ -63,12 +63,19 @@ class OrderUpdate(BaseModel):
   i: int
   """Order ID"""
 
+class ListStatus(BaseModel):
+  e: Literal['listStatus']
+  E: int
+  """Event time (millis timestamp)"""
+  s: str
+  """Symbol"""
+  g: int
+  """OrderListId"""
 
-Update = AccountUpdate | BalanceUpdate | OrderUpdate
+Update = AccountUpdate | BalanceUpdate | OrderUpdate | ListStatus
 
 class UpdateRoot(RootModel):
   root: Update = Field(discriminator='e')
-
 
 @dataclass
 class UserStream:
@@ -97,7 +104,7 @@ class UserStream:
       await self._ping_stream(listen_key)
       await asyncio.sleep(interval.total_seconds())
 
-  async def user_stream(self) -> AsyncIterable[Update]:
+  async def subscribe(self) -> AsyncIterable[Update]:
     listen_key = await self._create_stream()
     asyncio.create_task(self._keep_alive(listen_key))
 

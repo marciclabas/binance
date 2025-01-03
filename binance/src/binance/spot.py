@@ -1,14 +1,12 @@
-from typing_extensions import Literal
+from typing_extensions import Literal, overload, TypeVar
 from dataclasses import dataclass
 from datetime import datetime
-from urllib.parse import urlencode
-from decimal import Decimal
 from pydantic import BaseModel
-import orjson
-from .client import ClientMixin
-from .types import OrderStatus, Error, ErrorRoot, Order, ListStatusType, ListOrderStatus
-from .util import sign, binance_timestamp
+from .user import UserMixin
+from .util import binance_timestamp, validate_response
+from .types import OrderStatus, Error, Order, ListStatusType, ListOrderStatus
 
+T = TypeVar('T')
 
 ReplaceMode = Literal['STOP_ON_FAILURE', 'ALLOW_FAILURE']
 
@@ -36,32 +34,23 @@ class ListOrderResponse(BaseModel):
   code: Literal[None] = None
   orders: list[PartialOrder]
 
-def validate_response(r: str) -> OrderResponse | Error:
-  obj = orjson.loads(r)
-  if 'code' in obj:
-    return ErrorRoot.model_validate(obj).root
-  return OrderResponse.model_validate(obj)
-
-def validate_list_response(r: str) -> ListOrderResponse | Error:
-  obj = orjson.loads(r)
-  if 'code' in obj:
-    return ErrorRoot.model_validate(obj).root
-  return ListOrderResponse.model_validate(obj)
+class CancelOrderResponse(BaseModel):
+  code: Literal[None] = None
 
 @dataclass
-class Spot(ClientMixin):
+class Spot(UserMixin):
   api_key: str
   api_secret: str
   base: str = 'https://api.binance.com'
 
-  def sign(self, query_string: str) -> str:
-    return sign(query_string, secret=self.api_secret)
-  
-  def signed_query(self, params: dict) -> str:
-    return urlencode(params) + '&signature=' + self.sign(urlencode(params))
-
-  @ClientMixin.with_client
-  async def query_order(self, symbol: str, orderId: int, recvWindow: int = 5000) -> OrderResponse | Error:
+  @overload
+  async def query_order(self, symbol: str, orderId: int, recvWindow: int = 5000, *, unsafe: Literal[False] = False) -> OrderResponse | Error:
+    ...
+  @overload
+  async def query_order(self, symbol: str, orderId: int, recvWindow: int = 5000, *, unsafe: Literal[True]) -> OrderResponse:
+    ...
+  @UserMixin.with_client
+  async def query_order(self, symbol: str, orderId: int, recvWindow: int = 5000, *, unsafe: bool = False) -> OrderResponse | Error:
     query = self.signed_query({
       'symbol': symbol,
       'orderId': orderId,
@@ -72,9 +61,12 @@ class Spot(ClientMixin):
       f'{self.base}/api/v3/order?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
-    return validate_response(r.text)
+    val = validate_response(r.text, OrderResponse)
+    if unsafe and val.code is not None:
+      raise RuntimeError(f'Error fetching order: {val.code}, {val.msg}')
+    return val
   
-  @ClientMixin.with_client
+  @UserMixin.with_client
   async def query_order_list(self, orderListId: int, recvWindow: int = 5000) -> ListOrderResponse | Error:
     query = self.signed_query({
       'orderListId': orderListId,
@@ -85,10 +77,16 @@ class Spot(ClientMixin):
       f'{self.base}/api/v3/orderList?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
-    return validate_list_response(r.text)
+    return validate_response(r.text, ListOrderResponse)
 
-  @ClientMixin.with_client
-  async def spot_order(self, pair: str, order: Order) -> OrderResponse | Error:
+  @overload
+  async def spot_order(self, pair: str, order: Order, *, unsafe: Literal[False] = False) -> OrderResponse | Error:
+    ...
+  @overload
+  async def spot_order(self, pair: str, order: Order, *, unsafe: Literal[True]) -> OrderResponse:
+    ...
+  @UserMixin.with_client
+  async def spot_order(self, pair: str, order: Order, *, unsafe: bool = False) -> OrderResponse | Error:
     query = self.signed_query({
       'symbol': pair,
       'timestamp': binance_timestamp(datetime.now()),
@@ -99,11 +97,23 @@ class Spot(ClientMixin):
       f'{self.base}/api/v3/order?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
-    return validate_response(r.text)
+    val = validate_response(r.text, OrderResponse)
+    if unsafe and val.code is not None:
+      raise RuntimeError(f'Error creating order: {val.code}, {val.msg}')
+    return val
   
 
-  @ClientMixin.with_client
-  async def oto_order(self, pair: str, *, working: Order, pending: Order) -> ListOrderResponse | Error:
+  @overload
+  async def oto_order(self, pair: str, *, working: Order, pending: Order, unsafe: Literal[False] = False) -> ListOrderResponse | Error:
+    ...
+  @overload
+  async def oto_order(self, pair: str, *, working: Order, pending: Order, unsafe: Literal[True]) -> ListOrderResponse:
+    ...
+  @overload
+  async def oto_order(self, pair: str, *, working: Order, pending: Order, unsafe: Literal[False] = False) -> ListOrderResponse | Error:
+    ...
+  @UserMixin.with_client
+  async def oto_order(self, pair: str, *, working: Order, pending: Order, unsafe: bool = False) -> ListOrderResponse | Error:
 
     def cap_first(s: str):
       return s[0].upper() + s[1:]
@@ -122,10 +132,13 @@ class Spot(ClientMixin):
       f'{self.base}/api/v3/orderList/oto?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
-    return validate_list_response(r.text)
+    val = validate_response(r.text, ListOrderResponse)
+    if unsafe and val.code is not None:
+      raise RuntimeError(f'Error creating OTO order: {val.code}, {val.msg}')
+    return val
 
 
-  @ClientMixin.with_client
+  @UserMixin.with_client
   async def replace_order(self, pair: str, orderId: int, order: Order) -> OrderResponse | Error:
 
     query = self.signed_query({
@@ -140,10 +153,16 @@ class Spot(ClientMixin):
       f'{self.base}/api/v3/order/cancelReplace?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
-    return validate_response(r.text)
+    return validate_response(r.text, OrderResponse)
   
-  @ClientMixin.with_client
-  async def cancel_order(self, symbol: str, orderId: str, recvWindow: int = 5000) -> OrderResponse | Error:
+  @overload
+  async def cancel_order(self, symbol: str, orderId: int, recvWindow: int = 5000, *, unsafe: Literal[False] = False) -> CancelOrderResponse | Error:
+    ...
+  @overload
+  async def cancel_order(self, symbol: str, orderId: int, recvWindow: int = 5000, *, unsafe: Literal[True]) -> CancelOrderResponse:
+    ...
+  @UserMixin.with_client
+  async def cancel_order(self, symbol: str, orderId: int, recvWindow: int = 5000, *, unsafe: bool = False) -> CancelOrderResponse | Error:
     query = self.signed_query({
       'symbol': symbol,
       'orderId': orderId,
@@ -155,10 +174,19 @@ class Spot(ClientMixin):
       f'{self.base}/api/v3/order?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
-    return validate_response(r.text)
+    val = validate_response(r.text, CancelOrderResponse)
+    if unsafe and val.code is not None:
+      raise RuntimeError(f'Error canceling order: {val.code}, {val.msg}')
+    return val
 
-  @ClientMixin.with_client
-  async def cancel_order_list(self, symbol: str, orderListId: int, recvWindow: int = 5000) -> ListOrderResponse | Error:
+  @overload
+  async def cancel_order_list(self, symbol: str, orderListId: int, recvWindow: int = 5000, *, unsafe: Literal[False] = False) -> ListOrderResponse | Error:
+    ...
+  @overload
+  async def cancel_order_list(self, symbol: str, orderListId: int, recvWindow: int = 5000, *, unsafe: Literal[True]) -> ListOrderResponse:
+    ...
+  @UserMixin.with_client
+  async def cancel_order_list(self, symbol: str, orderListId: int, recvWindow: int = 5000, *, unsafe: bool = False) -> ListOrderResponse | Error:
     query = self.signed_query({
       'symbol': symbol,
       'orderListId': orderListId,
@@ -170,4 +198,7 @@ class Spot(ClientMixin):
       f'{self.base}/api/v3/orderList?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
-    return validate_list_response(r.text)
+    val = validate_response(r.text, ListOrderResponse)
+    if unsafe and val.code is not None:
+      raise RuntimeError(f'Error canceling order: {val.code}, {val.msg}')
+    return val

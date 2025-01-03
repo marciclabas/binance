@@ -1,8 +1,8 @@
-from typing_extensions import Literal, Generic, TypeVar, Mapping
+from typing_extensions import Literal, Generic, TypeVar, Mapping, overload
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from .client import ClientMixin
 from .types import OrderType, Error, ErrorRoot, Candle
 from .util import encode_query, binance_timestamp
@@ -25,10 +25,22 @@ class LotSize(BaseModel):
   maxQty: str
   stepSize: str
 
+class NotionalFilter(BaseModel):
+  filterType: Literal['NOTIONAL']
+  minNotional: str
+  maxNotional: str
+  applyToMarket: bool
+  avgPriceMins: int
+
+class IcebergFilter(BaseModel):
+  filterType: Literal['ICEBERG_PARTS']
+  limit: int
+
 class OtherFilter(BaseModel):
+  model_config = ConfigDict(extra='allow')
   filterType: str
 
-Filter = PriceFilter | LotSize | OtherFilter
+Filter = PriceFilter | LotSize | NotionalFilter | IcebergFilter | OtherFilter 
 
 class SymbolInfo(BaseModel):
   symbol: str
@@ -61,6 +73,20 @@ class SymbolInfo(BaseModel):
       if f.filterType == 'LOT_SIZE':
         return f # type: ignore
     raise RuntimeError('Lot size filter not found')
+  
+  @property
+  def notional(self) -> NotionalFilter:
+    for f in self.filters:
+      if f.filterType == 'NOTIONAL':
+        return f # type: ignore
+    raise RuntimeError('Notional filter not found')
+  
+  @property
+  def iceberg(self) -> IcebergFilter:
+    for f in self.filters:
+      if f.filterType == 'ICEBERG_PARTS':
+        return f # type: ignore
+    raise RuntimeError('Iceberg filter not found')
 
 class ExchangeInfoResponse(BaseModel):
   timezone: str
@@ -79,13 +105,23 @@ class ExchangeInfo(Generic[S]):
 
 @dataclass
 class _ExchangeInfo(_Base):
+  @overload
+  async def exchange_info(self, symbol: S, *symbols: S, unsafe: Literal[False] = False) -> ExchangeInfo[S] | Error:
+    ...
+  @overload
+  async def exchange_info(self, symbol: S, *symbols: S, unsafe: Literal[True]) -> ExchangeInfo[S]:
+    ...
   @ClientMixin.with_client
-  async def exchange_info(self, symbol: S, *symbols: S) -> ExchangeInfo[S] | Error:
+  async def exchange_info(self, symbol: S, *symbols: S, unsafe: bool = False) -> ExchangeInfo[S] | Error:
     symbols = (symbol, *symbols)
     r = await self.client.get(f'{self.base}/api/v3/exchangeInfo?symbols={encode_query(symbols)}')
     obj = r.json()
     if 'code' in obj:
-      return ErrorRoot.model_validate(obj).root
+      err = ErrorRoot.model_validate(obj).root
+      if unsafe:
+        raise RuntimeError(err.msg)
+      else:
+        return err
 
     info = ExchangeInfoResponse.model_validate(obj)
     return ExchangeInfo(
@@ -113,12 +149,22 @@ class OrderBookResponse(BaseModel):
 
 @dataclass
 class _OrderBook(_Base):
+  @overload
+  async def order_book(self, symbol: str, *, limit: int = 100, unsafe: Literal[False] = False) -> OrderBook | Error:
+    ...
+  @overload
+  async def order_book(self, symbol: str, *, limit: int = 100, unsafe: Literal[True]) -> OrderBook:
+    ...
   @ClientMixin.with_client
-  async def order_book(self, symbol: str, limit: int = 100) -> OrderBook | Error:
+  async def order_book(self, symbol: str, *, limit: int = 100, unsafe: bool = False) -> OrderBook | Error:
     r = await self.client.get(f'{self.base}/api/v3/depth', params={'symbol': symbol, 'limit': limit})
     obj = r.json()
     if 'code' in obj:
-      return ErrorRoot.model_validate(obj).root
+      err = ErrorRoot.model_validate(obj).root
+      if unsafe:
+        raise RuntimeError(err.msg)
+      else:
+        return err
 
     data = OrderBookResponse.model_validate(obj)
     return OrderBook(

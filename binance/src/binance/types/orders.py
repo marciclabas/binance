@@ -11,6 +11,7 @@ class LimitOrder(BaseOrder):
   quantity: str
   price: str
   timeInForce: TimeInForce
+  icebergQty: NotRequired[str]
 
 class MarketOrder(BaseOrder):
   type: Literal['MARKET']
