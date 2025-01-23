@@ -6,7 +6,7 @@ import traceback
 from pydantic import BaseModel, RootModel, Field, ValidationError
 import httpx
 from websockets.asyncio.client import connect
-from .types import Side, OrderType, OrderStatus, TimeInForce
+from binance.types import Side, OrderType, OrderStatus, TimeInForce
 
 class Balance(BaseModel):
   a: str
@@ -15,7 +15,6 @@ class Balance(BaseModel):
   """Free amount"""
   l: float
   """Locked amount"""
-
 
 class AccountUpdate(BaseModel):
   e: Literal['outboundAccountPosition']
@@ -79,8 +78,6 @@ class UpdateRoot(RootModel):
 
 @dataclass
 class UserStream:
-  api_key: str
-  base: str = 'https://api.binance.com'
   ws_base: str = 'wss://stream.binance.com:9443'
 
   async def _create_stream(self) -> str:

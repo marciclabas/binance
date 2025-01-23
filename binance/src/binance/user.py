@@ -1,25 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
-from urllib.parse import urlencode
 from decimal import Decimal
 from pydantic import BaseModel, TypeAdapter
 from binance.types import OrderStatus, Side
-from .client import ClientMixin
-from .util import sign, binance_timestamp
-
-@dataclass
-class UserMixin(ClientMixin):
-  api_key: str
-  api_secret: str
-  base: str = 'https://api.binance.com'
-
-  def sign(self, query_string: str) -> str:
-    return sign(query_string, secret=self.api_secret)
-  
-  def signed_query(self, params: dict) -> str:
-    query = urlencode(params)
-    return query + '&signature=' + self.sign(query)
-  
+from binance.util import binance_timestamp, UserMixin
 
 class Balance(BaseModel):
   asset: str

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from binance import Spot, Public, UserStream, User, SimpleEarn
-from binance.user import UserMixin
+from binance.util import UserMixin
 
 @dataclass
 class Binance(UserMixin):

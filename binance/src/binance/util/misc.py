@@ -2,10 +2,8 @@ from typing_extensions import AsyncIterable, Generic, TypeVar
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_DOWN, ROUND_FLOOR
-import json
 import orjson
 from pydantic import BaseModel, ValidationError
-from urllib.parse import quote
 from haskellian import ManagedAsync
 from binance.types import Error, ErrorRoot
 
@@ -32,14 +30,6 @@ def round2tick(x: Decimal, tick_size: Decimal) -> Decimal:
 def trunc2tick(x: Decimal, tick_size: Decimal) -> Decimal:
   r = (x / tick_size).to_integral_value(rounding=ROUND_FLOOR) * tick_size
   return r.normalize()
-
-def sign(query_string: str, *, secret: str) -> str:
-  import hmac
-  import hashlib
-  return hmac.new(secret.encode(), query_string.encode(), hashlib.sha256).hexdigest()
-
-def encode_query(obj) -> str:
-  return quote(json.dumps(obj, separators=(',', ':'))) # binance can't cope with spaces, it seems
 
 @dataclass
 class Stream(Generic[T]):

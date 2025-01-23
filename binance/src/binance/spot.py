@@ -39,9 +39,6 @@ class CancelOrderResponse(BaseModel):
 
 @dataclass
 class Spot(UserMixin):
-  api_key: str
-  api_secret: str
-  base: str = 'https://api.binance.com'
 
   @overload
   async def query_order(self, symbol: str, orderId: int, recvWindow: int = 5000, *, unsafe: Literal[False] = False) -> OrderResponse | Error:

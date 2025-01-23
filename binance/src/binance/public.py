@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel, ConfigDict
-from .client import ClientMixin
+from .util.client import ClientMixin
 from .types import OrderType, Error, ErrorRoot, Candle
 from .util import encode_query, binance_timestamp
 
