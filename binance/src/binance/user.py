@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel, TypeAdapter
 from binance.types import OrderStatus, Side
-from binance.util import binance_timestamp, UserMixin
+from binance.util import timestamp, UserMixin
 
 class Balance(BaseModel):
   asset: str
@@ -21,11 +21,12 @@ class BalanceResponse(BaseModel):
   
 @dataclass
 class _Balance(UserMixin):
+  recvWindow: int = 5000
   @UserMixin.with_client
-  async def balance(self, recvWindow: int = 5000, omitZeroBalances: bool = True) -> BalanceResponse:
+  async def balance(self, omitZeroBalances: bool = True) -> BalanceResponse:
     query = self.signed_query({
-      'timestamp': binance_timestamp(datetime.now()),
-      'recvWindow': recvWindow,
+      'recvWindow': self.recvWindow,
+      'timestamp': timestamp.now(),
       'omitZeroBalances': omitZeroBalances,
     })
     r = await self.client.get(
@@ -46,12 +47,14 @@ OrdersAdapter = TypeAdapter(list[Order])
 
 @dataclass
 class _Orders(UserMixin):
+  recvWindow: int = 5000
+  
   @UserMixin.with_client
-  async def orders(self, symbol: str, recvWindow: int = 5000) -> list[Order]:
+  async def orders(self, symbol: str) -> list[Order]:
     query = self.signed_query({
       'symbol': symbol,
-      'timestamp': binance_timestamp(datetime.now()),
-      'recvWindow': recvWindow,
+      'timestamp': timestamp.now(),
+      'recvWindow': self.recvWindow,
     })
     r = await self.client.get(
       f'{self.base}/api/v3/allOrders?{query}',

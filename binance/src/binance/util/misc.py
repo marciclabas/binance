@@ -1,27 +1,30 @@
-from typing_extensions import AsyncIterable, Generic, TypeVar
+from typing_extensions import AsyncIterable, Generic, TypeVar, Protocol, overload, Literal, ParamSpec
 from dataclasses import dataclass, field
+from functools import wraps
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_DOWN, ROUND_FLOOR
 import orjson
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, ConfigDict
 from haskellian import ManagedAsync
 from binance.types import Error, ErrorRoot
 
 T = TypeVar('T')
-M = TypeVar('M', bound=BaseModel)
 
-def validate_response(r: str, Model: type[M]) -> M | Error:
-  obj = orjson.loads(r)
-  try:
-    if 'code' in obj:
-      return ErrorRoot.model_validate(obj).root
-    return Model.model_validate(obj)
-  except ValidationError as e:
-    print('Error validating:', obj)
-    raise e
-
-def binance_timestamp(dt: datetime) -> int:
-  return int(1e3*dt.timestamp())
+class timestamp:
+  @staticmethod
+  def parse(time: int) -> datetime:
+    """Parse a Binance-issued millis timestamp"""
+    return datetime.fromtimestamp(time/1e3)
+  
+  @staticmethod
+  def dump(dt: datetime) -> int:
+    """Dump a datetime object to a Binance-ready millis timestamp"""
+    return int(1e3*dt.timestamp())
+  
+  @staticmethod
+  def now() -> int:
+    """Get the current time in Binance-ready millis timestamp"""
+    return timestamp.dump(datetime.now())
 
 def round2tick(x: Decimal, tick_size: Decimal) -> Decimal:
   r = (x / tick_size).quantize(Decimal('1.'), rounding=ROUND_HALF_DOWN) * tick_size

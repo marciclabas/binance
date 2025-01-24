@@ -1,11 +1,10 @@
-from typing_extensions import Literal, Generic, TypeVar, Mapping, overload
+from typing_extensions import Literal, Generic, TypeVar, Mapping
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel, ConfigDict
-from .util.client import ClientMixin
-from .types import OrderType, Error, ErrorRoot, Candle
-from .util import encode_query, binance_timestamp
+from binance.types import OrderType, ErrorRoot, BinanceException, Candle
+from binance.util import encode_query, timestamp, ClientMixin
 
 S = TypeVar('S', bound=str)
 
@@ -93,7 +92,6 @@ class ExchangeInfoResponse(BaseModel):
   serverTime: int
   """Millis timestamp"""
   symbols: list[SymbolInfo]
-  code: Literal[None] = None
 
 @dataclass
 class ExchangeInfo(Generic[S]):
@@ -101,46 +99,35 @@ class ExchangeInfo(Generic[S]):
   serverTime: int
   """Millis timestamp"""
   symbols: Mapping[S, SymbolInfo]
-  code: Literal[None] = None
 
 @dataclass
 class _ExchangeInfo(_Base):
-  @overload
-  async def exchange_info(self, symbol: S, *symbols: S, unsafe: Literal[False] = False) -> ExchangeInfo[S] | Error:
-    ...
-  @overload
-  async def exchange_info(self, symbol: S, *symbols: S, unsafe: Literal[True]) -> ExchangeInfo[S]:
-    ...
   @ClientMixin.with_client
-  async def exchange_info(self, symbol: S, *symbols: S, unsafe: bool = False) -> ExchangeInfo[S] | Error:
+  async def exchange_info(self, symbol: S, *symbols: S) -> ExchangeInfo[S]:
     symbols = (symbol, *symbols)
     r = await self.client.get(f'{self.base}/api/v3/exchangeInfo?symbols={encode_query(symbols)}')
     obj = r.json()
     if 'code' in obj:
       err = ErrorRoot.model_validate(obj).root
-      if unsafe:
-        raise RuntimeError(err.msg)
-      else:
-        return err
-
-    info = ExchangeInfoResponse.model_validate(obj)
-    return ExchangeInfo(
-      timezone=info.timezone,
-      serverTime=info.serverTime,
-      symbols={s.symbol: s for s in info.symbols if s.symbol in symbols}
-    )
+      raise BinanceException(err)
+    else:
+      info = ExchangeInfoResponse.model_validate(obj)
+      return ExchangeInfo(
+        timezone=info.timezone,
+        serverTime=info.serverTime,
+        symbols={s.symbol: s for s in info.symbols if s.symbol in symbols}
+      )
 
 @dataclass
 class Order:
-  price: Decimal
-  qty: Decimal
+  price: str
+  qty: str
 
 @dataclass
 class OrderBook:
   lastUpdateId: int
   bids: list[Order]
   asks: list[Order]
-  code: Literal[None] = None
 
 class OrderBookResponse(BaseModel):
   lastUpdateId: int
@@ -149,34 +136,25 @@ class OrderBookResponse(BaseModel):
 
 @dataclass
 class _OrderBook(_Base):
-  @overload
-  async def order_book(self, symbol: str, *, limit: int = 100, unsafe: Literal[False] = False) -> OrderBook | Error:
-    ...
-  @overload
-  async def order_book(self, symbol: str, *, limit: int = 100, unsafe: Literal[True]) -> OrderBook:
-    ...
   @ClientMixin.with_client
-  async def order_book(self, symbol: str, *, limit: int = 100, unsafe: bool = False) -> OrderBook | Error:
+  async def order_book(self, symbol: str, *, limit: int = 100) -> OrderBook:
     r = await self.client.get(f'{self.base}/api/v3/depth', params={'symbol': symbol, 'limit': limit})
     obj = r.json()
     if 'code' in obj:
       err = ErrorRoot.model_validate(obj).root
-      if unsafe:
-        raise RuntimeError(err.msg)
-      else:
-        return err
-
-    data = OrderBookResponse.model_validate(obj)
-    return OrderBook(
-      lastUpdateId=data.lastUpdateId,
-      bids=[Order(price=Decimal(p), qty=Decimal(q)) for p, q in data.bids],
-      asks=[Order(price=Decimal(p), qty=Decimal(q)) for p, q in data.asks]
-    )
+      raise BinanceException(err)
+    else:
+      data = OrderBookResponse.model_validate(obj)
+      return OrderBook(
+        lastUpdateId=data.lastUpdateId,
+        bids=[Order(price=p, qty=q) for p, q in data.bids],
+        asks=[Order(price=p, qty=q) for p, q in data.asks]
+      )
 
 def parse_candle(binance_array):
   return Candle(
-    open_time = datetime.fromtimestamp(binance_array[0] / 1000),
-    close_time = datetime.fromtimestamp(binance_array[6] / 1000),
+    open_time = timestamp.parse(binance_array[0]),
+    close_time = timestamp.parse(binance_array[6]),
     open = Decimal(binance_array[1]),
     close = Decimal(binance_array[4]),
     high = Decimal(binance_array[2]),
@@ -197,7 +175,7 @@ class _Candles(_Base):
   ) -> list[Candle]:
     params  = {'symbol': pair, 'interval': interval, 'limit': limit}
     if start is not None:
-      params['startTime'] = binance_timestamp(start)
+      params['startTime'] = timestamp.dump(start)
     endpoint = self.base + '/api/v3/klines'
     r = await self.client.get(endpoint, params=params)
     return list(map(parse_candle, r.json()))

@@ -1,5 +1,6 @@
-from typing_extensions import Literal
-from pydantic import BaseModel, RootModel, Field
+from typing_extensions import Literal, TypeVar
+from dataclasses import dataclass
+from pydantic import BaseModel, RootModel, Field, ConfigDict
 
 class _BaseError(BaseModel):
   msg: str
@@ -40,3 +41,21 @@ Error = UnknownError | OrderRejected | CancelRejected | InvalidMessage | OrderAr
 
 class ErrorRoot(RootModel):
   root: Error = Field(discriminator='code')
+
+@dataclass
+class BinanceException(Exception):
+  error: Error
+
+class AnyModel(BaseModel):
+  model_config = ConfigDict(extra='allow')
+
+M = TypeVar('M', bound=BaseModel)
+
+def validate_response(r: str, Model: type[M] = AnyModel) -> M:
+  import orjson
+  obj = orjson.loads(r)
+  if 'code' in obj:
+    err = ErrorRoot.model_validate(obj).root
+    raise BinanceException(err)
+  else:
+    return Model.model_validate(obj)

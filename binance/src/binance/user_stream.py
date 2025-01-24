@@ -78,6 +78,8 @@ class UpdateRoot(RootModel):
 
 @dataclass
 class UserStream:
+  api_key: str
+  base: str = 'https://api.binance.com'
   ws_base: str = 'wss://stream.binance.com:9443'
 
   async def _create_stream(self) -> str:
