@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from binance import Spot, Public, UserStream, User, SimpleEarn
+from binance import Spot, Public, UserStream, User, SimpleEarn, Margin, Wallet
 from binance.util import UserMixin
 
 @dataclass
@@ -10,6 +10,8 @@ class Binance(UserMixin):
     self.user_stream = UserStream(self.api_key, self.api_secret)
     self.user = User(self.api_key, self.api_secret)
     self.simple_earn = SimpleEarn(self.api_key, self.api_secret)
+    self.margin = Margin(self.api_key, self.api_secret)
+    self.wallet = Wallet(self.api_key, self.api_secret)
   
   @classmethod
   def env(cls):
