@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from binance.util import ClientMixin, timestamp
-from binance.types import ErrorRoot, BinanceException
+from binance.types import validate_response
 from ._candles import Candle, CandlesResponse
 
 @dataclass
@@ -16,11 +16,6 @@ class _UiCandles(ClientMixin):
     if start is not None:
       params['startTime'] = timestamp.dump(start)
     r = await self.client.get(f'{self.base}/api/v3/uiKlines', params=params)
-    obj = r.json()
-    if 'code' in obj:
-      err = ErrorRoot.model_validate(obj).root
-      raise BinanceException(err)
-    else:
-      trades = CandlesResponse.model_validate(obj).root
-      return list(map(Candle.of, trades))
+    trades = validate_response(r.text, CandlesResponse).root
+    return list(map(Candle.of, trades))
   

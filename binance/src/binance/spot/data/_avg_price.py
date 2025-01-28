@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pydantic import BaseModel
-from binance.util import ClientMixin, timestamp
-from binance.types import ErrorRoot, BinanceException
+from binance.util import ClientMixin
+from binance.types import ErrorRoot, BinanceException, validate_response
 
 class AvgPrice(BaseModel):
   mins: int
@@ -19,10 +19,5 @@ class _AvgPrice(ClientMixin):
     """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints#current-average-price"""
     params  = {'symbol': pair }
     r = await self.client.get(f'{self.base}/api/v3/avgPrice', params=params)
-    obj = r.json()
-    if 'code' in obj:
-      err = ErrorRoot.model_validate(obj).root
-      raise BinanceException(err)
-    else:
-      return AvgPrice.model_validate(obj)
+    return validate_response(r.text, AvgPrice)
   

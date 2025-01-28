@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pydantic import BaseModel, RootModel
 from datetime import datetime
 from binance.util import ClientMixin, timestamp
-from binance.types import ErrorRoot, BinanceException
+from binance.types import validate_response
 
 class AggTradeModel(BaseModel):
   a: int
@@ -65,10 +65,5 @@ class _AggTrades(ClientMixin):
     if endTime is not None:
       params['endTime'] = timestamp.dump(endTime)
     r = await self.client.get(f'{self.base}/api/v3/aggTrades', params=params)
-    obj = r.json()
-    if 'code' in obj:
-      err = ErrorRoot.model_validate(obj).root
-      raise BinanceException(err)
-    else:
-      trades = AggTradeResponse.model_validate(obj).root
-      return list(map(AggTrade.of, trades))
+    trades = validate_response(r.text, AggTradeResponse).root
+    return list(map(AggTrade.of, trades))

@@ -1,7 +1,7 @@
 from typing_extensions import TypeVar, Literal, Generic, Mapping
 from dataclasses import dataclass
 from pydantic import BaseModel, ConfigDict
-from binance.types import OrderType, ErrorRoot, BinanceException
+from binance.types import OrderType, ErrorRoot, BinanceException, validate_response
 from binance.util import ClientMixin, encode_query
 
 S = TypeVar('S', bound=str)
@@ -102,14 +102,9 @@ class _ExchangeInfo(ClientMixin):
     symbols = (symbol, *symbols)
     params = {'symbols': encode_query(symbols)}
     r = await self.client.get(f'{self.base}/api/v3/exchangeInfo', params=params)
-    obj = r.json()
-    if 'code' in obj:
-      err = ErrorRoot.model_validate(obj).root
-      raise BinanceException(err)
-    else:
-      info = ExchangeInfoResponse.model_validate(obj)
-      return ExchangeInfo(
-        timezone=info.timezone,
-        serverTime=info.serverTime,
-        symbols={s.symbol: s for s in info.symbols if s.symbol in symbols}
-      )
+    info = validate_response(r.text, ExchangeInfoResponse)
+    return ExchangeInfo(
+      timezone=info.timezone,
+      serverTime=info.serverTime,
+      symbols={s.symbol: s for s in info.symbols if s.symbol in symbols}
+    )

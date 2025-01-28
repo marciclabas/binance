@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from pydantic import RootModel
 from binance.util import ClientMixin
-from binance.types import ErrorRoot, BinanceException
+from binance.types import validate_response
 from ._trades_recent import Trade, TradeResponse
 
 @dataclass
@@ -13,9 +12,4 @@ class _OldTrades(ClientMixin):
     if fromId is not None:
       params['fromId'] = fromId
     r = await self.client.get(f'{self.base}/api/v3/historicalTrades', params=params)
-    obj = r.json()
-    if 'code' in obj:
-      err = ErrorRoot.model_validate(obj).root
-      raise BinanceException(err)
-    else:
-      return TradeResponse.model_validate(obj).root
+    return validate_response(r.text, TradeResponse).root

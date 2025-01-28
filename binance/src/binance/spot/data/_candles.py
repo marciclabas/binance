@@ -1,9 +1,9 @@
 from typing_extensions import Any
 from dataclasses import dataclass
-from pydantic import BaseModel, RootModel
+from pydantic import RootModel
 from datetime import datetime
 from binance.util import ClientMixin, timestamp
-from binance.types import ErrorRoot, BinanceException
+from binance.types import validate_response
 
 
 
@@ -71,11 +71,6 @@ class _Candles(ClientMixin):
     if start is not None:
       params['startTime'] = timestamp.dump(start)
     r = await self.client.get(f'{self.base}/api/v3/klines', params=params)
-    obj = r.json()
-    if 'code' in obj:
-      err = ErrorRoot.model_validate(obj).root
-      raise BinanceException(err)
-    else:
-      trades = CandlesResponse.model_validate(obj).root
-      return list(map(Candle.of, trades))
+    trades = validate_response(r.text, CandlesResponse).root
+    return list(map(Candle.of, trades))
   
