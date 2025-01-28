@@ -1,11 +1,15 @@
 from typing_extensions import TypeVar, ParamSpec
+from dataclasses import dataclass, field
 from functools import wraps
 import httpx
 
 T = TypeVar('T', covariant=True)
 P = ParamSpec('P')
 
+@dataclass
 class ClientMixin:
+  base: str = field(default='https://api.binance.com', kw_only=True)
+
   async def __aenter__(self):
     self._client = httpx.AsyncClient()
     return self

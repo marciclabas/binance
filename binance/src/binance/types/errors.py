@@ -13,6 +13,10 @@ class InvalidMessage(_BaseError):
   code: Literal[-1013]
   tag: Literal['INVALID_MESSAGE'] = 'INVALID_MESSAGE'
 
+class IllegalChars(_BaseError):
+  code: Literal[-1100]
+  tag: Literal['ILLEGAL_CHARS'] = 'ILLEGAL_CHARS'
+
 class MissingParam(_BaseError):
   code: Literal[-1102]
   tag: Literal['MISSING_PARAM'] = 'MISSING_PARAM'
@@ -37,7 +41,7 @@ class OrderArchived(_BaseError):
   code: Literal[-2026]
   tag: Literal['ORDER_ARCHIVED'] = 'ORDER_ARCHIVED'
 
-Error = UnknownError | OrderRejected | CancelRejected | InvalidMessage | OrderArchived | MissingParam | UnreadParams | RejectedKey
+Error = UnknownError | OrderRejected | CancelRejected | InvalidMessage | OrderArchived | MissingParam | UnreadParams | RejectedKey | IllegalChars
 
 class ErrorRoot(RootModel):
   root: Error = Field(discriminator='code')

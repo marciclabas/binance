@@ -9,13 +9,12 @@ def sign(query_string: str, *, secret: str) -> str:
 
 def encode_query(obj) -> str:
   import json
-  return quote(json.dumps(obj, separators=(',', ':'))) # binance can't cope with spaces, it seems
+  return (json.dumps(obj, separators=(',', ':'))) # binance can't cope with spaces, it seems
 
 @dataclass
 class UserMixin(ClientMixin):
   api_key: str
   api_secret: str
-  base: str = 'https://api.binance.com'
 
   def sign(self, query_string: str) -> str:
     return sign(query_string, secret=self.api_secret)

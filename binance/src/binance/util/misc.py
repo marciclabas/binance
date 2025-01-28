@@ -1,12 +1,8 @@
-from typing_extensions import AsyncIterable, Generic, TypeVar, Protocol, overload, Literal, ParamSpec
+from typing_extensions import AsyncIterable, Generic, TypeVar
 from dataclasses import dataclass, field
-from functools import wraps
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_DOWN, ROUND_FLOOR
-import orjson
-from pydantic import BaseModel, ValidationError, ConfigDict
 from haskellian import ManagedAsync
-from binance.types import Error, ErrorRoot
 
 T = TypeVar('T')
 

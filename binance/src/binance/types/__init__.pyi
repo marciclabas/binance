@@ -1,10 +1,9 @@
 from .errors import Error, CancelRejected, OrderRejected, UnknownError, ErrorRoot, BinanceException, validate_response
 from .enums import OrderStatus, OrderType, Side, TimeInForce, ListStatusType, ListOrderStatus
 from .orders import Order, LimitOrder, MarketOrder, MarketOrderQuote
-from .data import Candle
 
 __all__ = [
   'Error', 'CancelRejected', 'OrderRejected', 'UnknownError', 'ErrorRoot', 'BinanceException', 'validate_response',
   'OrderStatus', 'OrderType', 'Side', 'TimeInForce', 'ListStatusType', 'ListOrderStatus',
-  'Order', 'LimitOrder', 'MarketOrder', 'MarketOrderQuote', 'Candle',
+  'Order', 'LimitOrder', 'MarketOrder', 'MarketOrderQuote',
 ]
