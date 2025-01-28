@@ -39,6 +39,7 @@ class SimpleEarn(UserMixin):
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, EarnPositionResponse).rows
+  
   @UserMixin.with_client
   async def subscribe(self, *, productId: str, amount: str, auto_subscribe: bool = False) -> EarnSubscribeResponse:
     query = self.signed_query({
