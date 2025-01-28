@@ -58,22 +58,22 @@ async with client:
 
 ### Spot
 - General
-  - [ ] Ping
-  - [ ] Time
-  - [ ] Exchange Information
+  - [x] [Ping](binance/src/binance/spot/general/_ping.py)
+  - [x] [Time](binance/src/binance/spot/general/_time.py)
+  - [x] [Exchange Information](binance/src/binance/spot/general/_info.py)
 - Market Data
-  - [x] Order Book
-  - [x] Recent Trades
-  - [x] Old Trades
-  - [x] Aggregated Trades
-  - [x] Candles
-  - [x] UI Candles
-  - [x] Average Price
-  - [x] Last 24h Price Change Statistics
-  - [x] Last Day Price Change Statistics
-  - [x] Symbol Price Ticker
-  - [ ] ~~Symbol Order Book Ticker~~ Unnecessary: use Order Book instead
-  - [x] Window Price Change Statistics
+  - [x] [Order Book](binance/src/binance/spot/data/_order_book.py)
+  - [x] [Recent Trades](binance/src/binance/spot/data/_trades_recent.py)
+  - [x] [Old Trades](binance/src/binance/spot/data/_trades_old.py)
+  - [x] [Aggregated Trades](binance/src/binance/spot/data/_trades_agg.py)
+  - [x] [Candles](binance/src/binance/spot/data/_candles.py)
+  - [x] [UI Candles](binance/src/binance/spot/data/_candles_ui.py)
+  - [x] [Average Price](binance/src/binance/spot/data/_avg_price.py)
+  - [x] [Last 24h Price Change Statistics](binance/src/binance/spot/data/_stats_24h.py)
+  - [x] [Last Day Price Change Statistics](binance/src/binance/spot/data/_stats_day.py)
+  - [x] [Current Price](binance/src/binance/spot/data/_price.py)
+  - [ ] ~~Symbol Order Book Ticker~~ unnecessary: use Order Book instead
+  - [x] [Window Price Change Statistics](binance/src/binance/spot/data/_stats.py)
 - Trading
   - [ ] New Order
   - [ ] Test New Order
