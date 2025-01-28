@@ -30,7 +30,7 @@ from binance import Binance
 client = Binance(API_KEY, API_SECRET)
 # or client = Binance.env() to load `API_KEY` and `API_SECRET` from environment variables or a .env file
 
-await client.spot_order('BTCUSDT', {
+await client.spot.new_order('BTCUSDT', {
   'price', 10000, ... # let the type hints guide you
 })
 ```
@@ -45,10 +45,10 @@ from binance import Binance
 client = Binance(API_KEY, API_SECRET)
 
 async with client:
-  await client.spot_order('BTCUSDT', {
+  await client.spot.new_order('BTCUSDT', {
     'price', 10000, ...
   })
-  await client.spot_order('ETHUSDT', {
+  await client.spot.new_order('ETHUSDT', {
     'price', 2000, ...
   })
 ```
@@ -75,23 +75,23 @@ async with client:
   - [ ] ~~Symbol Order Book Ticker~~ unnecessary: use Order Book instead
   - [x] [Window Price Change Statistics](binance/src/binance/spot/data/_stats.py)
 - Trading
-  - [ ] New Order
-  - [ ] Test New Order
-  - [ ] Query Order
-  - [ ] Cancel Order
-  - [ ] Cancel All Orders
-  - [ ] Replace Order
-  - [ ] Query Open Orders
-  - [ ] Query All Orders
-  - [ ] New OCO Order
-  - [ ] New OTO Order
-  - [ ] New OTOCO Order
-  - [ ] Cancel Order List
-  - [ ] Query Order List
-  - [ ] Query All Order Lists
-  - [ ] Query Open Order Lists
-  - [ ] New SOR Order
-  - [ ] Test SOR Order
+  - [x] [New Order](binance/src/binance/spot/trading/_new_order.py)
+  - [x] [Test New Order](binance/src/binance/spot/trading/_test_order.py)
+  - [x] [Query Order](binance/src/binance/spot/trading/_query_order.py)
+  - [x] [Cancel Order](binance/src/binance/spot/trading/_cancel_order.py)
+  - [x] [Cancel Open Orders](binance/src/binance/spot/trading/_cancel_open_orders.py)
+  - [x] [Replace Order](binance/src/binance/spot/trading/_replace_order.py)
+  - [x] [Query Open Orders](binance/src/binance/spot/trading/_query_open_orders.py)
+  - [x] [Query All Orders](binance/src/binance/spot/trading/_query_all_orders.py.py)
+  - [x] [New OCO Order](binance/src/binance/spot/trading/_oco_order.py)
+  - [x] [New OTO Order](binance/src/binance/spot/trading/_oto_order.py)
+  - [x] [New OTOCO Order](binance/src/binance/spot/trading/_otoco_order.py)
+  - [x] [Cancel Order List](binance/src/binance/spot/trading/_cancel_order_list.py)
+  - [ ] ~~Query Order List~~: support unplanned
+  - [ ] Query ~~All Order Lists~~: support unplanned
+  - [ ] Query ~~Open Order Lists~~: support unplanned
+  - [ ] ~~New SOR Order~~: support unplanned
+  - [ ] ~~Test SOR Order~~: support unplanned
 - Account
   - [ ] Information
   - [ ] Trade List
