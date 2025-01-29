@@ -1,38 +1,38 @@
 # Binance
 
 - [Binance](#binance)
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [Public APIs](#public-apis)
-    - [Private API](#private-api)
-    - [Context Manager](#context-manager)
-  - [Supported APIs](#supported-apis)
-    - [Spot](#spot)
-      - [General](#general)
-      - [Market Data](#market-data)
-      - [Trading](#trading)
-      - [Account](#account)
-    - [Margin](#margin)
-    - [Simple Earn](#simple-earn)
-      - [Account](#account-1)
-      - [Earn](#earn)
-      - [~~History~~ support unplanned](#history-support-unplanned)
-    - [Wallet](#wallet)
-      - [Capital](#capital)
-      - [~~Asset~~ support unplanned](#asset-support-unplanned)
-      - [~~Account~~ support unplanned](#account-support-unplanned)
-      - [~~Travel Rule~~ support unplanned](#travel-rule-support-unplanned)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Public APIs](#public-apis)
+  - [Private API](#private-api)
+  - [Context Manager](#context-manager)
+- [Supported APIs](#supported-apis)
+  - [Spot](#spot)
+    - [General](#general)
+    - [Market Data](#market-data)
+    - [Trading](#trading)
+    - [Account](#account)
+  - [Margin](#margin)
+  - [Simple Earn](#simple-earn)
+    - [Account](#account-1)
+    - [Earn](#earn)
+    - [~~History~~ support unplanned](#history-support-unplanned)
+  - [Wallet](#wallet)
+    - [Capital](#capital)
+    - [~~Asset~~ support unplanned](#asset-support-unplanned)
+    - [~~Account~~ support unplanned](#account-support-unplanned)
+    - [~~Travel Rule~~ support unplanned](#travel-rule-support-unplanned)
 
 
-## Installation
+# Installation
 
 ```bash
 pip install binance-python
 ```
 
-## Usage
+# Usage
 
-### Public APIs
+## Public APIs
 
 You can use specific API clients without authentication. E.g:
 
@@ -44,7 +44,7 @@ await client.candles('BTCUSDT', interval='1m', limit=4)
 # [Candle(open_time=datetime(...), close_time=datetime(...), open=Decimal('93970.04000000'), ...), ...]
 ```
 
-### Private API
+## Private API
 
 Easiest is to just use the general client:
 
@@ -59,7 +59,7 @@ await client.spot.new_order('BTCUSDT', {
 })
 ```
 
-### Context Manager
+## Context Manager
 
 To run multiple requests concurrently, I'd recommend using the client as a context manager:
 
@@ -78,16 +78,16 @@ async with client:
 ```
 
 
-## Supported APIs
+# Supported APIs
 
-### Spot
+## Spot
 
-#### General
+### General
 - [x] [Ping](binance/src/binance/spot/general/_ping.py)
 - [x] [Time](binance/src/binance/spot/general/_time.py)
 - [x] [Exchange Information](binance/src/binance/spot/general/_info.py)
 
-#### Market Data
+### Market Data
 - [x] [Order Book](binance/src/binance/spot/data/_order_book.py)
 - [x] [Recent Trades](binance/src/binance/spot/data/_trades_recent.py)
 - [x] [Old Trades](binance/src/binance/spot/data/_trades_old.py)
@@ -101,7 +101,7 @@ async with client:
 - [ ] ~~Symbol Order Book Ticker~~ unnecessary, use Order Book instead
 - [x] [Window Price Change Statistics](binance/src/binance/spot/data/_stats.py)
 
-#### Trading
+### Trading
 - [x] [New Order](binance/src/binance/spot/trading/_new_order.py)
 - [x] [Test New Order](binance/src/binance/spot/trading/_test_order.py)
 - [x] [Query Order](binance/src/binance/spot/trading/_query_order.py)
@@ -120,7 +120,7 @@ async with client:
 - [ ] ~~New SOR Order~~ support unplanned
 - [ ] ~~Test SOR Order~~ support unplanned
 
-#### Account
+### Account
 - [x] [Information](binance/src/binance/spot/account/_info.py)
 - [x] [List Trades](binance/src/binance/spot/account/_trades.py)
 - [ ] ~~Query Unfilled Order Count~~ support unplanned
@@ -128,16 +128,16 @@ async with client:
 - [ ] ~~Query Allocations~~ support unplanned
 - [ ] ~~Query Commission Rates~~ support unplanned
 
-### Margin
+## Margin
 - [ ] Market Data
 - [ ] Trading
 - [ ] Borrow and Repay
 - [ ] Account
 - [ ] Transfer
 
-### Simple Earn
+## Simple Earn
 
-#### Account
+### Account
 - [x] [Account Summary](binance/src/binance/simple_earn/account/_account.py)
 - [x] [List Flexible Products](binance/src/binance/simple_earn/account/_flexible_products.py)
 - [x] [List Locked Products](binance/src/binance/simple_earn/account/_locked_products.py)
@@ -146,7 +146,7 @@ async with client:
 - [x] [Flexible Product Left Quota](binance/src/binance/simple_earn/account/_flexible_quota.py)
 - [x] [Locked Product Left Quota](binance/src/binance/simple_earn/account/_locked_quota.py)
 
-#### Earn
+### Earn
 - [x] [Subscribe Flexible Product](binance/src/binance/simple_earn/earn/_flexible_subscribe.py)
 - [ ] ~~Subscribe Locked Product~~ support unplanned
 - [x] [Redeem Flexible Product](binance/src/binance/simple_earn/earn/_flexible_redeem.py)
@@ -157,11 +157,11 @@ async with client:
 - [ ] ~~Locked Subscription Preview~~ support unplanned
 - [ ] ~~Set Locked Redeem Option~~ support unplanned
 
-#### ~~History~~ support unplanned
+### ~~History~~ support unplanned
 
-### Wallet
+## Wallet
 
-#### Capital
+### Capital
 - [ ] All Coins Info
 - [ ] Withdraw
 - [ ] Withdraw History
@@ -171,6 +171,6 @@ async with client:
 - [ ] Deposit Address List
 - [ ] ~~One-Click Deposit~~ support unplanned
 
-#### ~~Asset~~ support unplanned
-#### ~~Account~~ support unplanned
-#### ~~Travel Rule~~ support unplanned
+### ~~Asset~~ support unplanned
+### ~~Account~~ support unplanned
+### ~~Travel Rule~~ support unplanned
