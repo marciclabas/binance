@@ -11,7 +11,8 @@ build:
   cp ../README.md . && \
   rm -drf dist && \
   {{PYTHON}} -m build && \
-  rm -drf build
+  rm -drf build && \
+  rm README.md
 
 # Publish `dist/*` to pypi, then delete
 publish: build

@@ -16,7 +16,7 @@
     - [Simple Earn](#simple-earn)
       - [Account](#account-1)
       - [Earn](#earn)
-      - [~~History~~: support unplanned](#history-support-unplanned)
+      - [~~History~~ support unplanned](#history-support-unplanned)
     - [Wallet](#wallet)
 
 
@@ -94,7 +94,7 @@ async with client:
 - [x] [Last 24h Price Change Statistics](binance/src/binance/spot/data/_stats_24h.py)
 - [x] [Last Day Price Change Statistics](binance/src/binance/spot/data/_stats_day.py)
 - [x] [Current Price](binance/src/binance/spot/data/_price.py)
-- [ ] ~~Symbol Order Book Ticker~~ unnecessary: use Order Book instead
+- [ ] ~~Symbol Order Book Ticker~~ unnecessary, use Order Book instead
 - [x] [Window Price Change Statistics](binance/src/binance/spot/data/_stats.py)
 
 #### Trading
@@ -110,19 +110,19 @@ async with client:
 - [x] [New OTO Order](binance/src/binance/spot/trading/_oto_order.py)
 - [x] [New OTOCO Order](binance/src/binance/spot/trading/_otoco_order.py)
 - [x] [Cancel Order List](binance/src/binance/spot/trading/_cancel_order_list.py)
-- [ ] ~~Query Order List~~: support unplanned
-- [ ] Query ~~All Order Lists~~: support unplanned
-- [ ] Query ~~Open Order Lists~~: support unplanned
-- [ ] ~~New SOR Order~~: support unplanned
-- [ ] ~~Test SOR Order~~: support unplanned
+- [ ] ~~Query Order List~~ support unplanned
+- [ ] Query ~~All Order Lists~~ support unplanned
+- [ ] Query ~~Open Order Lists~~ support unplanned
+- [ ] ~~New SOR Order~~ support unplanned
+- [ ] ~~Test SOR Order~~ support unplanned
 
 #### Account
 - [x] [Information](binance/src/binance/spot/account/_info.py)
 - [x] [List Trades](binance/src/binance/spot/account/_trades.py)
-- [ ] ~~Query Unfilled Order Count~~: support unplanned
-- [ ] ~~Query Prevented Matches~~: support unplanned
-- [ ] ~~Query Allocations~~: support unplanned
-- [ ] ~~Query Commission Rates~~: support unplanned
+- [ ] ~~Query Unfilled Order Count~~ support unplanned
+- [ ] ~~Query Prevented Matches~~ support unplanned
+- [ ] ~~Query Allocations~~ support unplanned
+- [ ] ~~Query Commission Rates~~ support unplanned
 
 ### Margin
 - [ ] Market Data
@@ -134,26 +134,26 @@ async with client:
 ### Simple Earn
 
 #### Account
-- [ ] Summary
-- [ ] List Flexible Products
-- [ ] List Locked Products
-- [ ] Flexible Product Position
-- [ ] Locked Product Position
-- [ ] Flexible Product Left Quota
-- [ ] Locked Product Left Quota
+- [x] [Account Summary](binance/src/binance/simple_earn/account/_account.py)
+- [x] [List Flexible Products](binance/src/binance/simple_earn/account/_flexible_products.py)
+- [x] [List Locked Products](binance/src/binance/simple_earn/account/_locked_products.py)
+- [x] [Flexible Product Position](binance/src/binance/simple_earn/account/_flexible_position.py)
+- [x] [Locked Product Position](binance/src/binance/simple_earn/account/_locked_position.py)
+- [x] [Flexible Product Left Quota](binance/src/binance/simple_earn/account/_flexible_quota.py)
+- [x] [Locked Product Left Quota](binance/src/binance/simple_earn/account/_locked_quota.py)
 
 #### Earn
-- [x] Subscribe Flexible Product
-- [ ] Subscribe Locked Product
-- [x] Redeem Flexible Product
-- [ ] Redeem Locked Product
-- [ ] ~~Set Flexible Auto-Subscribe~~: support unplanned
-- [ ] ~~Set Locked Auto-Subscribe~~: support unplanned
-- [ ] Flexible Subscription Preview
-- [ ] Locked Subscription Preview
-- [ ] ~~Set Locked Redeem Option~~: support unplanned
+- [x] [Subscribe Flexible Product](binance/src/binance/simple_earn/earn/_flexible_subscribe.py)
+- [] ~~Subscribe Locked Product~~ support unplanned
+- [x] [Redeem Flexible Product](binance/src/binance/simple_earn/earn/_flexible_redeem.py)
+- [x] ~~Redeem Locked Product~~ support unplanned
+- [ ] ~~Set Flexible Auto-Subscribe~~ support unplanned
+- [ ] ~~Set Locked Auto-Subscribe~~ support unplanned
+- [x] [Flexible Subscription Preview](binance/src/binance/simple_earn/earn/_flexible_preview.py)
+- [ ] ~~Locked Subscription Preview~~ support unplanned
+- [ ] ~~Set Locked Redeem Option~~ support unplanned
 
-#### ~~History~~: support unplanned
+#### ~~History~~ support unplanned
 
 ### Wallet
 - [ ] Capital

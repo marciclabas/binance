@@ -7,7 +7,6 @@ from binance.types import validate_response
 class FlexibleSubscribeResponse(BaseModel):
   purchaseId: int
   success: bool
-  amount: str
 
 @dataclass
 class _FlexibleSubscribe(UserMixin):
