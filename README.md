@@ -18,6 +18,10 @@
       - [Earn](#earn)
       - [~~History~~ support unplanned](#history-support-unplanned)
     - [Wallet](#wallet)
+      - [Capital](#capital)
+      - [~~Asset~~ support unplanned](#asset-support-unplanned)
+      - [~~Account~~ support unplanned](#account-support-unplanned)
+      - [~~Travel Rule~~ support unplanned](#travel-rule-support-unplanned)
 
 
 ## Installation
@@ -144,7 +148,7 @@ async with client:
 
 #### Earn
 - [x] [Subscribe Flexible Product](binance/src/binance/simple_earn/earn/_flexible_subscribe.py)
-- [] ~~Subscribe Locked Product~~ support unplanned
+- [ ] ~~Subscribe Locked Product~~ support unplanned
 - [x] [Redeem Flexible Product](binance/src/binance/simple_earn/earn/_flexible_redeem.py)
 - [x] ~~Redeem Locked Product~~ support unplanned
 - [ ] ~~Set Flexible Auto-Subscribe~~ support unplanned
@@ -156,6 +160,17 @@ async with client:
 #### ~~History~~ support unplanned
 
 ### Wallet
-- [ ] Capital
-- [ ] Asset
-- [ ] Account
+
+#### Capital
+- [ ] All Coins Info
+- [ ] Withdraw
+- [ ] Withdraw History
+- [ ] Withdraw Address List
+- [ ] Deposit History
+- [ ] Deposit Address
+- [ ] Deposit Address List
+- [ ] ~~One-Click Deposit~~ support unplanned
+
+#### ~~Asset~~ support unplanned
+#### ~~Account~~ support unplanned
+#### ~~Travel Rule~~ support unplanned
