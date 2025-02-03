@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from urllib.parse import urlencode, quote
+from urllib.parse import urlencode
 from .client import ClientMixin
 
 def sign(query_string: str, *, secret: str) -> str:
@@ -20,7 +20,9 @@ class UserMixin(ClientMixin):
     return sign(query_string, secret=self.api_secret)
   
   def signed_query(self, params: dict) -> str:
-    query = urlencode(params)
+    # fix bools, which would show otherwise as "hello=True" instead of "hello=true"
+    fixed_params = [(k, str(v).lower() if isinstance(v, bool) else v) for k, v in params.items()]
+    query = urlencode(fixed_params)
     return query + '&signature=' + self.sign(query)
   
   @classmethod
