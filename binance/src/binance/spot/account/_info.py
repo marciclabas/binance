@@ -34,6 +34,13 @@ class AccountInfo(BaseModel):
   balances: list[Balance]
   uid: int
 
+  def free(self, asset: str):
+    from decimal import Decimal
+    for b in self.balances:
+      if b.asset == asset:
+        return Decimal(b.free)
+    return Decimal(0)
+
 @dataclass
 class _AccountInfo(UserMixin):
   recvWindow: int = 5000
