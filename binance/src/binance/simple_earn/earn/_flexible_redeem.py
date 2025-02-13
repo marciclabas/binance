@@ -31,7 +31,7 @@ class _FlexibleRedeem(UserMixin):
       params['redeemAll'] = True
     query = self.signed_query(params)
     r = await self.client.post(
-      f'{self.base}/sapi/v1/simple-earn/flexible/redeem?{query}',
+      f'/sapi/v1/simple-earn/flexible/redeem?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, FlexibleRedeemResponse)

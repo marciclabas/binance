@@ -30,7 +30,7 @@ class _Balance(UserMixin):
       'omitZeroBalances': omitZeroBalances,
     })
     r = await self.client.get(
-      f'{self.base}/api/v3/account?{query}',
+      f'/api/v3/account?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return BalanceResponse.model_validate_json(r.text)
@@ -57,7 +57,7 @@ class _Orders(UserMixin):
       'recvWindow': self.recvWindow,
     })
     r = await self.client.get(
-      f'{self.base}/api/v3/allOrders?{query}',
+      f'/api/v3/allOrders?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return OrdersAdapter.validate_json(r.text)

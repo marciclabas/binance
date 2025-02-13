@@ -31,7 +31,7 @@ class _QueryAllOrders(UserMixin):
       params['endTime'] = timestamp.dump(end)
     query = self.signed_query(params)
     r = await self.client.get(
-      f'{self.base}/api/v3/openOrders?{query}',
+      f'/api/v3/openOrders?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, QueryAllOrdersResponse).root

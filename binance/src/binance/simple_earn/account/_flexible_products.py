@@ -43,7 +43,7 @@ class _FlexibleProducts(UserMixin):
       params['size'] = size
     query = self.signed_query(params)
     r = await self.client.get(
-      f'{self.base}/sapi/v1/simple-earn/flexible/list?{query}',
+      f'/sapi/v1/simple-earn/flexible/list?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, FlexibleProductsResponse).rows

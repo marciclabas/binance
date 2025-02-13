@@ -21,7 +21,7 @@ class _Price(ClientMixin):
   ) -> Mapping[S, str]:
     """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints#symbol-price-ticker"""
     params  = {'symbols': encode_query([symbol, *symbols]) }
-    r = await self.client.get(f'{self.base}/api/v3/ticker/price', params=params)
+    r = await self.client.get(f'/api/v3/ticker/price', params=params)
     prices = validate_response(r.text, SymbolResponse).root
     ret = {}
     for p in prices:

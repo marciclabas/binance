@@ -67,7 +67,7 @@ class _OtocoOrder(UserMixin):
       **rename(pending_below, 'pendingBelow'),
     })
     r = await self.client.post(
-      f'{self.base}/api/v3/orderList/otoco?{query}',
+      f'/api/v3/orderList/otoco?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, OcoResponse)

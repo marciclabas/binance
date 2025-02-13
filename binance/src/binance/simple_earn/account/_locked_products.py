@@ -50,7 +50,7 @@ class _LockedProducts(UserMixin):
       params['size'] = size
     query = self.signed_query(params)
     r = await self.client.get(
-      f'{self.base}/sapi/v1/simple-earn/locked/list?{query}',
+      f'/sapi/v1/simple-earn/locked/list?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, LockedProductsResponse).rows

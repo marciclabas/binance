@@ -101,7 +101,7 @@ class _ExchangeInfo(ClientMixin):
     """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/general-endpoints#exchange-information"""
     symbols = (symbol, *symbols)
     params = {'symbols': encode_query(symbols)}
-    r = await self.client.get(f'{self.base}/api/v3/exchangeInfo', params=params)
+    r = await self.client.get(f'/api/v3/exchangeInfo', params=params)
     info = validate_response(r.text, ExchangeInfoResponse)
     return ExchangeInfo(
       timezone=info.timezone,

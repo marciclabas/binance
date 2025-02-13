@@ -18,6 +18,6 @@ class _AvgPrice(ClientMixin):
   ) -> AvgPrice:
     """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints#current-average-price"""
     params  = {'symbol': pair }
-    r = await self.client.get(f'{self.base}/api/v3/avgPrice', params=params)
+    r = await self.client.get(f'/api/v3/avgPrice', params=params)
     return validate_response(r.text, AvgPrice)
   

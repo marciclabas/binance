@@ -60,7 +60,7 @@ class _OcoOrder(UserMixin):
       **rename(below, 'below'),
     })
     r = await self.client.post(
-      f'{self.base}/api/v3/orderList/oco?{query}',
+      f'/api/v3/orderList/oco?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, OcoResponse)

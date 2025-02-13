@@ -20,7 +20,7 @@ class _QueryOpenOrders(UserMixin):
       'timestamp': timestamp.now(),
     })
     r = await self.client.get(
-      f'{self.base}/api/v3/openOrders?{query}',
+      f'/api/v3/openOrders?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, QueryOpenOrdersResponse).root

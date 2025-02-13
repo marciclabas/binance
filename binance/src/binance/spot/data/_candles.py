@@ -70,7 +70,7 @@ class _Candles(ClientMixin):
     params  = {'symbol': pair, 'interval': interval, 'limit': limit}
     if start is not None:
       params['startTime'] = timestamp.dump(start)
-    r = await self.client.get(f'{self.base}/api/v3/klines', params=params)
+    r = await self.client.get(f'/api/v3/klines', params=params)
     trades = validate_response(r.text, CandlesResponse).root
     return list(map(Candle.of, trades))
   

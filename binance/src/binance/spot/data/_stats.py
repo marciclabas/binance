@@ -14,7 +14,7 @@ class _PriceStats(ClientMixin):
   ) -> Mapping[S, PriceStats]:
     """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints#rolling-window-price-change-statistics"""
     params  = {'symbols': encode_query([symbol, *symbols]), 'windowSize': window }
-    r = await self.client.get(f'{self.base}/api/v3/ticker', params=params)
+    r = await self.client.get(f'/api/v3/ticker', params=params)
     stats = validate_response(r.text, PriceStatsResponse).root
     ret = {}
     for s in stats:

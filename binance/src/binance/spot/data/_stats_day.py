@@ -39,7 +39,7 @@ class _PriceStatsDay(ClientMixin):
   ) -> Mapping[S, PriceStats]:
     """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints#trading-day-ticker"""
     params  = {'symbols': encode_query([symbol, *symbols]) }
-    r = await self.client.get(f'{self.base}/api/v3/ticker/tradingDay', params=params)
+    r = await self.client.get(f'/api/v3/ticker/tradingDay', params=params)
     stats = validate_response(r.text, PriceStatsResponse).root
     ret = {}
     for s in stats:

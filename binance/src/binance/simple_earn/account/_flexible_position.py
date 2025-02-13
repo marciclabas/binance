@@ -44,7 +44,7 @@ class _FlexiblePosition(UserMixin):
       params['current'] = page
     query = self.signed_query(params)
     r = await self.client.get(
-      f'{self.base}/sapi/v1/simple-earn/flexible/position?{query}',
+      f'/sapi/v1/simple-earn/flexible/position?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, FlexiblePositionResponse).rows

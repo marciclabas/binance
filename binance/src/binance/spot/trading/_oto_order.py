@@ -48,7 +48,7 @@ class _OtoOrder(UserMixin):
       **rename(pending, 'pending'),
     })
     r = await self.client.post(
-      f'{self.base}/api/v3/orderList/oto?{query}',
+      f'/api/v3/orderList/oto?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, OtoResponse)

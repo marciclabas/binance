@@ -16,7 +16,7 @@ class _TestOrder(UserMixin):
       **order,
     })
     r = await self.client.post(
-      f'{self.base}/api/v3/order/test?{query}',
+      f'/api/v3/order/test?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text)

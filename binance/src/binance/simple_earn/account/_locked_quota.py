@@ -19,7 +19,7 @@ class _LockedQuota(UserMixin):
       'timestamp': timestamp.now(),
     })
     r = await self.client.get(
-      f'{self.base}/sapi/v1/simple-earn/locked/personalLeftQuota?{query}',
+      f'/sapi/v1/simple-earn/locked/personalLeftQuota?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, QuotaResponse).leftPersonalQuota

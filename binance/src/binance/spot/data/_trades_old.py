@@ -11,5 +11,5 @@ class _OldTrades(ClientMixin):
     params = { 'symbol': symbol, 'limit': limit }
     if fromId is not None:
       params['fromId'] = fromId
-    r = await self.client.get(f'{self.base}/api/v3/historicalTrades', params=params)
+    r = await self.client.get(f'/api/v3/historicalTrades', params=params)
     return validate_response(r.text, TradeResponse).root

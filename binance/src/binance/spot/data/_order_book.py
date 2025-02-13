@@ -24,7 +24,7 @@ class _OrderBook(ClientMixin):
   @ClientMixin.with_client
   async def order_book(self, symbol: str, *, limit: int = 100) -> OrderBook:
     """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints#order-book"""
-    r = await self.client.get(f'{self.base}/api/v3/depth', params={'symbol': symbol, 'limit': limit})
+    r = await self.client.get(f'/api/v3/depth', params={'symbol': symbol, 'limit': limit})
     data = validate_response(r.text, OrderBookResponse)
     return OrderBook(
       lastUpdateId=data.lastUpdateId,

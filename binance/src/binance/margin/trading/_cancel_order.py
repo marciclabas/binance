@@ -18,7 +18,7 @@ class _CancelOrder(UserMixin):
     })
 
     r = await self.client.delete(
-      f'{self.base}/sapi/v1/margin/order?{query}',
+      f'/sapi/v1/margin/order?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text)

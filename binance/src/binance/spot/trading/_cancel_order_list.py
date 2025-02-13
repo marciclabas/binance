@@ -16,7 +16,7 @@ class _CancelOrderList(UserMixin):
       'timestamp': timestamp.now(),
     })
     r = await self.client.delete(
-      f'{self.base}/api/v3/orderList?{query}',
+      f'/api/v3/orderList?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text)

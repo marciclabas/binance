@@ -51,7 +51,7 @@ class _ReplaceOrder(UserMixin):
       **order,
     })
     r = await self.client.post(
-      f'{self.base}/api/v3/order/cancelReplace?{query}',
+      f'/api/v3/order/cancelReplace?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     obj = r.json()

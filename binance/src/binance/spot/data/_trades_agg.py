@@ -64,6 +64,6 @@ class _AggTrades(ClientMixin):
       params['startTime'] = timestamp.dump(startTime)
     if endTime is not None:
       params['endTime'] = timestamp.dump(endTime)
-    r = await self.client.get(f'{self.base}/api/v3/aggTrades', params=params)
+    r = await self.client.get(f'/api/v3/aggTrades', params=params)
     trades = validate_response(r.text, AggTradeResponse).root
     return list(map(AggTrade.of, trades))
