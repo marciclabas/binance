@@ -1,14 +1,20 @@
-from typing_extensions import overload, Literal
+from typing_extensions import Literal, overload
 from dataclasses import dataclass
 from pydantic import BaseModel
 from binance.util import UserMixin, timestamp
 from binance.types import validate_response
 
+class NewOrderResponse(BaseModel):
+  orderId: int
+  transactTime: int
+  """Millis timestamp"""
+
+
 class BorrowResponse(BaseModel):
   tranId: int
 
 @dataclass
-class Margin(UserMixin):
+class Leasing(UserMixin):
   recvWindow: int = 5000
 
   @overload
@@ -33,8 +39,7 @@ class Margin(UserMixin):
       params['isIsolated'] = 'TRUE'
     query = self.signed_query(params)
     r = await self.client.post(
-      f'{self.base}/sapi/v1/margin/borrow-repay?{query}',
+      f'/sapi/v1/margin/borrow-repay?{query}',
       headers={'X-MBX-APIKEY': self.api_key},
     )
     return validate_response(r.text, BorrowResponse)
-  
