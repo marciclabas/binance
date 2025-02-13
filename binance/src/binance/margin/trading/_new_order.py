@@ -14,12 +14,13 @@ class _NewOrder(UserMixin):
   recvWindow: int = 5000
 
   @UserMixin.with_client
-  async def new_order(self, pair: str, order: Order) -> NewOrderResponse:
-    """https://developers.binance.com/docs/binance-spot-api-docs/rest-api/trading-endpoints#new-order-trade"""
+  async def new_order(self, pair: str, order: Order, *, isolated: bool = False) -> NewOrderResponse:
+    """https://developers.binance.com/docs/margin_trading/trade/Margin-Account-New-Order"""
     query = self.signed_query({
       'symbol': pair,
       'timestamp': timestamp.now(),
       'recvWindow': self.recvWindow,
+      'isIsolated': isolated,
       **order,
     })
     r = await self.client.post(
