@@ -11,7 +11,7 @@ class ClientMixin:
   base: str = field(default='https://api.binance.com', kw_only=True)
 
   async def __aenter__(self):
-    self._client = httpx.AsyncClient()
+    self._client = httpx.AsyncClient(base_url=self.base)
     return self
   
   async def __aexit__(self, *args):

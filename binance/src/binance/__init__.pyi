@@ -1,4 +1,3 @@
-from .public import Public, ExchangeInfo
 from .spot import Spot
 from .user import User
 from .user_stream import UserStream, Update
@@ -7,11 +6,11 @@ from .margin import Margin
 from .wallet import Wallet
 from .main import Binance
 from . import types
-from .types import Error, OrderStatus, OrderType, Side, TimeInForce, Order, Candle
+from .types import Error, OrderStatus, OrderType, Side, TimeInForce, Order
 
 __all__ = [
-  'Public', 'Spot', 'UserStream', 'Binance', 'User',
+  'Spot', 'UserStream', 'Binance', 'User',
   'SimpleEarn', 'Margin', 'Wallet',
-  'Update', 'Order', 'Candle', 'ExchangeInfo',
+  'Update', 'Order',
   'types', 'Error', 'OrderStatus', 'OrderType', 'Side', 'TimeInForce',
 ]

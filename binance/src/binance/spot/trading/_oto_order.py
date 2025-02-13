@@ -8,7 +8,7 @@ class OrderResponse(BaseModel):
 
 class OtoResponse(BaseModel):
   orderListId: int
-  transactTime: int
+  transactTime: int | None = None
   """Millis timestamp"""
   orders: tuple[OrderResponse, OrderResponse]
 
